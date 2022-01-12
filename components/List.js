@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {FlatList} from 'react-native';
-import {useMedia} from '../hooks/Apihooks';
+import {useMedia} from '../hooks/ApiHooks';
 import {baseUrl} from '../utils/variables';
 import ListItem from './ListItem';
 
