@@ -14,7 +14,7 @@ const List = () => {
   const loadMedia = async (start = 0, limit = 10) => {
     try {
       const response = await fetch(
-        `${baseUrl}media?start=${start}&limit${limit}`
+        `${baseUrl}media?start=${start}&limit=${limit}`
       );
       if (!response.ok) {
         throw Error(response.statusText);
