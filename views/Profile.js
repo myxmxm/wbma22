@@ -1,10 +1,21 @@
-import React from 'react';
-import {StyleSheet, SafeAreaView, Text} from 'react-native';
+import React, {useContext} from 'react';
+import {StyleSheet, SafeAreaView, Text, Button} from 'react-native';
+import {MainContext} from '../contexts/MainContext';
 
 const Profile = () => {
+  const {isLoggedIn, setIsLoggedIn} = useContext(MainContext);
+  // const logOut = () => {
+  //   setIsLoggedIn(false);
+  // };
   return (
     <SafeAreaView style={styles.container}>
       <Text>Profile</Text>
+      <Button
+        title="Log out"
+        onPress={() => {
+          setIsLoggedIn(false);
+        }}
+      />
     </SafeAreaView>
   );
 };

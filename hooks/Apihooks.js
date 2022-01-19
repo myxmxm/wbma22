@@ -28,7 +28,7 @@ const useMedia = () => {
   };
   // call loadMedia() only once when the com component is loaded
   useEffect(() => {
-    loadMedia(0, 5);
+    loadMedia(0, 30);
   }, []);
   console.log(mediaArray);
   return {mediaArray};
