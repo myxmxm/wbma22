@@ -1,26 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {FlatList} from 'react-native';
 import {useMedia} from '../hooks/ApiHooks';
-import {baseUrl} from '../utils/variables';
 import ListItem from './ListItem';
+import PropTypes from 'prop-types';
 
-// const dataUrl =
-//   'https://raw.githubusercontent.com/mattpe/wbma/master/docs/assets/test.json';
-
-// const baseUrl = 'https://media.mw.metropolia.fi/wbma/';
-
-const List = () => {
-  // loadMedia();
-
+const List = ({navigation}) => {
   const {mediaArray} = useMedia();
 
   return (
     <FlatList
       data={mediaArray}
       keyExtractor={(item) => item.file_id.toString()}
-      renderItem={({item}) => <ListItem singleMedia={item} />}
+      renderItem={({item}) => (
+        <ListItem navigation={navigation} singleMedia={item} />
+      )}
     ></FlatList>
   );
+};
+
+List.propTypes = {
+  navigation: PropTypes.object,
 };
 
 export default List;
