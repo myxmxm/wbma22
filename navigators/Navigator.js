@@ -33,7 +33,7 @@ const StackScreen = () => {
       {isLoggedIn ? (
         <>
           <Stack.Screen
-            name="Home"
+            name="Main"
             component={TabScreen}
             options={{headerShown: false}}
           ></Stack.Screen>
