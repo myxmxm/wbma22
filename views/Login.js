@@ -15,6 +15,9 @@ const Login = ({navigation}) => {
     // TODO: save the value of userToken saved in AsyncStorage as userToken
     const userToken = await AsyncStorage.getItem('userToken');
     console.log('token is:', userToken);
+    if (!userToken) {
+      return;
+    }
     try {
       const userData = await getUserByToken(userToken);
       console.log('checkToken function return:', userData);
