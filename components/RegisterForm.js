@@ -5,9 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useLogin, useUser} from '../hooks/Apihooks';
 import {MainContext} from '../contexts/MainContext';
 
-const LoginForm = () => {
-  const {setIsLoggedIn, setUser} = useContext(MainContext);
+const RegisterForm = () => {
+  const {setIsLoggedIn} = useContext(MainContext);
   const {postLogin} = useLogin();
+  const {postUser} = useUser();
   const {
     control,
     handleSubmit,
@@ -15,16 +16,16 @@ const LoginForm = () => {
   } = useForm({
     defaultValues: {
       username: '',
+      email: '',
       password: '',
+      full_name: '',
     },
   });
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const userData = await postLogin(data);
-      await AsyncStorage.setItem('userToken', userData.token);
-      setUser(userData.user);
-      setIsLoggedIn(true);
+      const userData = await postUser(data);
+      console.log('Refister onSubmit', userData);
     } catch (error) {
       console.error(error);
     }
@@ -64,7 +65,6 @@ const LoginForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            secureTextEntry={true}
             placeholder="password"
           />
         )}
@@ -72,9 +72,49 @@ const LoginForm = () => {
       />
       {errors.password && <Text>This is required.</Text>}
 
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <TextInput
+            // style={styles.input}
+            style={{borderWidth: 1, padding: 5}}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="none"
+            placeholder="email"
+          />
+        )}
+        name="email"
+      />
+      {errors.email && <Text>This is required.</Text>}
+
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <TextInput
+            // style={styles.input}
+            style={{borderWidth: 1, padding: 5}}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="none"
+            placeholder="full_name"
+          />
+        )}
+        name="full_name"
+      />
+      {errors.full_name && <Text>This is required.</Text>}
+
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

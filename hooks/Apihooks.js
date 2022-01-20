@@ -1,5 +1,30 @@
 import {useEffect, useState} from 'react';
 import {baseUrl} from '../utils/variables';
+// options = {} make it optional
+const doFetch = async (url, options = {}) => {
+  try {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    if (response.ok) {
+      return json;
+    } else {
+      // let message = '';
+      // if (json.error){
+      //   message = json.message + ': ' + json.error;
+      // } else {
+      //   message = json.message;
+      // }
+      // (ternary) operator way
+      const message = json.error
+        ? `${json.message}: ${json.error}`
+        : json.message;
+      // || if json.message not exist show response.statusText
+      throw new Error(message || response.statusText);
+    }
+  } catch (error) {
+    throw new Error(Error.message);
+  }
+};
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
@@ -46,18 +71,19 @@ const useLogin = () => {
       },
       body: JSON.stringify(userCredentials),
     };
-    try {
-      // TODO: use fetch to send request to login endpoint and return the result as json, handle errors with try/catch and response.ok
-      const response = await fetch(baseUrl + 'login', options);
-      const userDate = await response.json();
-      if (response.ok) {
-        return userDate;
-      } else {
-        throw new Error(userDate.message);
-      }
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    return await doFetch(baseUrl + 'login', options);
+    // try {
+    //   // TODO: use fetch to send request to login endpoint and return the result as json, handle errors with try/catch and response.ok
+    //   const response = await fetch(baseUrl + 'login', options);
+    //   const userDate = await response.json();
+    //   if (response.ok) {
+    //     return userDate;
+    //   } else {
+    //     throw new Error(userDate.message);
+    //   }
+    // } catch (error) {
+    //   throw new Error(error.message);
+    // }
   };
 
   return {postLogin};
@@ -65,26 +91,29 @@ const useLogin = () => {
 
 const useUser = () => {
   const getUserByToken = async (token) => {
-    try {
-      const options = {
-        // get method is default,not necessary to put it.
-        method: 'GET',
-        // if there is - like x-access-token  use {}
-        headers: {'x-access-token': token},
-      };
-      const response = await fetch(baseUrl + 'users/user', options);
-      const userData = response.json();
-      if (response.ok) {
-        return userData;
-      } else {
-        throw new Error(userData.message);
-      }
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const options = {
+      // get method is default,not necessary to put it.
+      method: 'GET',
+      // if there is - like x-access-token  use {}
+      headers: {'x-access-token': token},
+    };
+    return await doFetch(baseUrl + 'users/user', options);
   };
 
-  return {getUserByToken};
+  const postUser = async (data) => {
+    const options = {
+      // TODO: add method, headers and body for sending json data with POST
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    return await doFetch(baseUrl + 'users', options);
+  };
+
+  return {getUserByToken, postUser};
 };
 
 export {useMedia, useLogin, useUser};
