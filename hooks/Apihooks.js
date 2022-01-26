@@ -116,4 +116,24 @@ const useUser = () => {
   return {getUserByToken, postUser};
 };
 
-export {useMedia, useLogin, useUser};
+const userTag = () => {
+  const postTag = async (data) => {
+    // todo: implement later
+    // const options = {
+    //   // TODO: add method, headers and body for sending json data with POST
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     // 'Content-Type': 'application/x-www-form-urlencoded',
+    //   },
+    //   body: JSON.stringify(data),
+    // };
+  };
+  // option is not needed for get method,so we give only url parameter, option take default value {}(check line 4), get is default method, no need to mention it when using it(not like post method).
+  const getFileByTag = async (tag) => {
+    return await doFetch(baseUrl + 'tags/' + tag);
+  };
+  return {postTag, getFileByTag};
+};
+
+export {useMedia, useLogin, useUser, userTag};
