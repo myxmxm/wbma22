@@ -8,7 +8,7 @@ import {uploadsUrl} from '../utils/variables';
 const Profile = () => {
   const {setIsLoggedIn, user} = useContext(MainContext);
   const [avatar, setAvatar] = useState('http://placekitten.com/640');
-  const {getFileByTag} = userTag();
+  const {getFileByTag, postTag} = userTag();
   console.log('profile:', user);
 
   const fetchAvatar = async () => {
@@ -24,12 +24,29 @@ const Profile = () => {
     }
   };
 
+  // temp testing postTag
+  // this is not needed yet and should be called only when you want to set new avatarin the remote API
+  const createAvatar = async (mediaId) => {
+    const data = {
+      file_id: mediaId,
+      tag: 'avatar_' + user.user_id,
+    };
+    try {
+      const result = await postTag(data, 'correct token should be here to use');
+      console.log(result);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   useEffect(() => {
     fetchAvatar();
+    // createAvatar(95); for testing
   }, []);
   // const logOut = () => {
   //   setIsLoggedIn(false);
   // };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text>Profile</Text>
