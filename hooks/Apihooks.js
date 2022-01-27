@@ -116,7 +116,7 @@ const useUser = () => {
   return {getUserByToken, postUser};
 };
 
-const userTag = () => {
+const useTag = () => {
   const postTag = async (tagData, token) => {
     // todo: implement later
     const options = {
@@ -132,10 +132,10 @@ const userTag = () => {
     return await doFetch(baseUrl + 'tags/', options);
   };
   // option is not needed for get method,so we give only url parameter, option take default value {}(check line 4), get is default method, no need to mention it when using it(not like post method).
-  const getFileByTag = async (tag) => {
+  const getFilesByTag = async (tag) => {
     return await doFetch(baseUrl + 'tags/' + tag);
   };
-  return {postTag, getFileByTag};
+  return {postTag, getFilesByTag};
 };
 
-export {useMedia, useLogin, useUser, userTag};
+export {useMedia, useLogin, useUser, useTag};

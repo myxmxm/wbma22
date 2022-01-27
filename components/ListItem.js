@@ -1,109 +1,36 @@
 import React from 'react';
-import {View} from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
-import {useUser} from '../hooks/Apihooks';
-import {Input, Button, Text} from 'react-native-elements';
+import PropTypes from 'prop-types';
+import {uploadsUrl} from '../utils/variables';
+import {Avatar, ListItem as RNEListItem} from 'react-native-elements';
 
-const RegisterForm = () => {
-  const {postUser} = useUser();
-
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {
-      username: '',
-      password: '',
-      email: '',
-      full_name: '',
-    },
-  });
-
-  const onSubmit = async (data) => {
-    console.log(data);
-    try {
-      const userData = await postUser(data);
-      console.log('register onSubmit', userData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+const ListItem = ({navigation, singleMedia}) => {
   return (
-    <View>
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-            placeholder="Username"
-          />
-        )}
-        name="username"
-      />
-      {errors.username && <Text>This is required.</Text>}
-
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-            secureTextEntry={true}
-            placeholder="Password"
-          />
-        )}
-        name="password"
-      />
-      {errors.password && <Text>This is required.</Text>}
-
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-            placeholder="Email"
-          />
-        )}
-        name="email"
-      />
-      {errors.email && <Text>This is required.</Text>}
-
-      <Controller
-        control={control}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="words"
-            placeholder="Full name"
-          />
-        )}
-        name="full_name"
-      />
-
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
-    </View>
+    <RNEListItem
+      bottomDivider
+      onPress={() => {
+        navigation.navigate('Single', {file: singleMedia});
+      }}
+    >
+      <Avatar
+        size="large"
+        source={{uri: uploadsUrl + singleMedia.thumbnails.w160}}
+      ></Avatar>
+      <RNEListItem.Content>
+        <RNEListItem.Title numberOfLines={1} h4>
+          {singleMedia.title}
+        </RNEListItem.Title>
+        <RNEListItem.Subtitle numberOfLines={1}>
+          {singleMedia.description}
+        </RNEListItem.Subtitle>
+      </RNEListItem.Content>
+      <RNEListItem.Chevron />
+    </RNEListItem>
   );
 };
 
-export default RegisterForm;
+ListItem.propTypes = {
+  singleMedia: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
+
+export default ListItem;
