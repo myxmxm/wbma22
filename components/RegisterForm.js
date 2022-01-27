@@ -1,14 +1,12 @@
-import React, {useContext} from 'react';
-import {Text, View, TextInput, Button} from 'react-native';
+import React from 'react';
+import {View} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useLogin, useUser} from '../hooks/Apihooks';
-import {MainContext} from '../contexts/MainContext';
+import {useUser} from '../hooks/Apihooks';
+import {Input, Button, Text} from 'react-native-elements';
 
 const RegisterForm = () => {
-  const {setIsLoggedIn} = useContext(MainContext);
-  const {postLogin} = useLogin();
   const {postUser} = useUser();
+
   const {
     control,
     handleSubmit,
@@ -16,16 +14,17 @@ const RegisterForm = () => {
   } = useForm({
     defaultValues: {
       username: '',
-      email: '',
       password: '',
+      email: '',
       full_name: '',
     },
   });
+
   const onSubmit = async (data) => {
     console.log(data);
     try {
       const userData = await postUser(data);
-      console.log('Refister onSubmit', userData);
+      console.log('register onSubmit', userData);
     } catch (error) {
       console.error(error);
     }
@@ -39,14 +38,12 @@ const RegisterForm = () => {
           required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            // style={styles.input}
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            placeholder="username"
+            placeholder="Username"
           />
         )}
         name="username"
@@ -56,16 +53,16 @@ const RegisterForm = () => {
       <Controller
         control={control}
         rules={{
-          maxLength: 100,
+          required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            placeholder="password"
+            secureTextEntry={true}
+            placeholder="Password"
           />
         )}
         name="password"
@@ -78,14 +75,12 @@ const RegisterForm = () => {
           required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            // style={styles.input}
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            placeholder="email"
+            placeholder="Email"
           />
         )}
         name="email"
@@ -94,23 +89,17 @@ const RegisterForm = () => {
 
       <Controller
         control={control}
-        rules={{
-          required: true,
-        }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            // style={styles.input}
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            autoCapitalize="none"
-            placeholder="full_name"
+            autoCapitalize="words"
+            placeholder="Full name"
           />
         )}
         name="full_name"
       />
-      {errors.full_name && <Text>This is required.</Text>}
 
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>

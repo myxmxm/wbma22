@@ -1,59 +1,109 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import PropTypes from 'prop-types';
-import {uploadsUrl} from '../utils/variables';
+import {View} from 'react-native';
+import {useForm, Controller} from 'react-hook-form';
+import {useUser} from '../hooks/Apihooks';
+import {Input, Button, Text} from 'react-native-elements';
 
-const ListItem = ({navigation, singleMedia}) => {
+const RegisterForm = () => {
+  const {postUser} = useUser();
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+      email: '',
+      full_name: '',
+    },
+  });
+
+  const onSubmit = async (data) => {
+    console.log(data);
+    try {
+      const userData = await postUser(data);
+      console.log('register onSubmit', userData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.row}
-      onPress={() => {
-        navigation.navigate('Single', {file: singleMedia});
-      }}
-    >
-      <View style={styles.imagebox}>
-        <Image
-          source={{uri: uploadsUrl + singleMedia.thumbnails.w160}}
-          style={styles.image}
-        />
-      </View>
-      <View style={styles.textbox}>
-        <Text style={styles.listTitle}>{singleMedia.title}</Text>
-        <Text>{singleMedia.description}</Text>
-      </View>
-    </TouchableOpacity>
+    <View>
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="none"
+            placeholder="Username"
+          />
+        )}
+        name="username"
+      />
+      {errors.username && <Text>This is required.</Text>}
+
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="none"
+            secureTextEntry={true}
+            placeholder="Password"
+          />
+        )}
+        name="password"
+      />
+      {errors.password && <Text>This is required.</Text>}
+
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="none"
+            placeholder="Email"
+          />
+        )}
+        name="email"
+      />
+      {errors.email && <Text>This is required.</Text>}
+
+      <Controller
+        control={control}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            autoCapitalize="words"
+            placeholder="Full name"
+          />
+        )}
+        name="full_name"
+      />
+
+      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+    </View>
   );
 };
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#eee',
-    borderRadius: 6,
-    marginHorizontal: 10,
-    marginBottom: 5,
-  },
-  imagebox: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    borderRadius: 6,
-  },
-  textbox: {
-    flex: 2,
-    padding: 10,
-  },
-  listTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    paddingBottom: 15,
-  },
-});
 
-ListItem.propTypes = {
-  singleMedia: PropTypes.object.isRequired,
-  navigation: PropTypes.object.isRequired,
-};
-
-export default ListItem;
+export default RegisterForm;
