@@ -3,7 +3,7 @@ import {StyleSheet, ActivityIndicator} from 'react-native';
 import {Card, Text, Button, ListItem, Avatar} from 'react-native-elements';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useTag} from '../hooks/Apihooks';
+import {useTag} from '../hooks/ApiHooks';
 import {uploadsUrl} from '../utils/variables';
 
 const Profile = () => {

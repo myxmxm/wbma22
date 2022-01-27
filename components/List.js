@@ -3,7 +3,7 @@ import {FlatList} from 'react-native';
 
 import ListItem from './ListItem';
 import PropTypes from 'prop-types';
-import {useMedia} from '../hooks/Apihooks';
+import {useMedia} from '../hooks/ApiHooks';
 
 const List = ({navigation}) => {
   const {mediaArray} = useMedia();

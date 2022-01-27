@@ -1,7 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import {useUser} from '../hooks/Apihooks';
+import {useUser} from '../hooks/ApiHooks';
 import {Input, Button, Text} from 'react-native-elements';
 
 const RegisterForm = () => {
@@ -18,6 +18,7 @@ const RegisterForm = () => {
       email: '',
       full_name: '',
     },
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data) => {
