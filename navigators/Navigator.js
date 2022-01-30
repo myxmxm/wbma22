@@ -7,13 +7,33 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Single from '../views/Single';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
+import {Icon} from 'react-native-elements';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const TabScreen = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      // set icon by using react native elements
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+          switch (route.name) {
+            case 'Home':
+              iconName = 'home';
+              break;
+            case 'Upload':
+              iconName = 'cloud-upload';
+              break;
+            case 'Profile':
+              iconName = 'account-box';
+              break;
+          }
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
       <Tab.Screen
         name="Home"
         component={Home}

@@ -1,9 +1,10 @@
 import React, {useContext} from 'react';
-import {Text, View, TextInput, Button} from 'react-native';
+import {View} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useLogin, useUser} from '../hooks/Apihooks';
 import {MainContext} from '../contexts/MainContext';
+import {Button, Input, Text} from 'react-native-elements';
 
 const LoginForm = () => {
   const {setIsLoggedIn, setUser} = useContext(MainContext);
@@ -38,14 +39,12 @@ const LoginForm = () => {
           required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            // style={styles.input}
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            placeholder="username"
+            placeholder="Username"
           />
         )}
         name="username"
@@ -55,17 +54,16 @@ const LoginForm = () => {
       <Controller
         control={control}
         rules={{
-          maxLength: 100,
+          required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={{borderWidth: 1, padding: 5}}
+          <Input
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
             secureTextEntry={true}
-            placeholder="password"
+            placeholder="Password"
           />
         )}
         name="password"

@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, Text, Button, Image} from 'react-native';
+import {StyleSheet, ActivityIndicator} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {userTag} from '../hooks/Apihooks';
 import {uploadsUrl} from '../utils/variables';
+import {Card, Text, Button, ListItem, Avatar} from 'react-native-elements';
 
 const Profile = () => {
   const {setIsLoggedIn, user} = useContext(MainContext);
@@ -48,25 +49,31 @@ const Profile = () => {
   // };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Profile</Text>
-      <Text>User name: {user.username}</Text>
-      <Image
+    <Card>
+      <Card.Title>
+        <Text h1>{user.username}</Text>
+      </Card.Title>
+      <Card.Image
         source={{uri: avatar}}
-        style={{width: '90%', height: '80%'}}
-        resizeMode="contain"
+        style={styles.image}
+        PlaceholderContent={<ActivityIndicator />}
       />
-      <Text>Email: {user.email}</Text>
-      <Text>Full name: {user.full_name}</Text>
-      <Text>User id : {user.user_id}</Text>
+      <ListItem>
+        <Avatar icon={{name: 'email', color: 'black'}} />
+        <Text>{user.email}</Text>
+      </ListItem>
+      <ListItem>
+        <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
+        <Text>{user.full_name}</Text>
+      </ListItem>
       <Button
-        title="Log out"
+        title="Log out!"
         onPress={async () => {
           await AsyncStorage.clear();
           setIsLoggedIn(false);
         }}
       />
-    </SafeAreaView>
+    </Card>
   );
 };
 
