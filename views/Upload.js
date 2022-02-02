@@ -61,7 +61,7 @@ const Upload = ({navigation}) => {
       name: filename,
       type: type + '/' + fileExtension,
     });
-    // console.log(formData);
+    console.log(formData);
     try {
       const token = await AsyncStorageLib.getItem('userToken');
       const response = await postMedia(formData, token);
