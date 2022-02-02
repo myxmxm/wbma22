@@ -55,7 +55,19 @@ const useMedia = () => {
   useEffect(() => {
     loadMedia(0, 5);
   }, []);
-  console.log(mediaArray);
+
+  const postMedia = async (formData, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    };
+    return await doFetch(baseUrl + 'media', options);
+  };
+  console.log(mediaArray, postMedia);
   return {mediaArray};
 };
 
