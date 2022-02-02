@@ -66,7 +66,7 @@ const Upload = ({navigation}) => {
       const token = await AsyncStorageLib.getItem('userToken');
       const response = await postMedia(formData, token);
       console.log('upload response', response);
-      Alert.alert('File', 'uploaded', [
+      Alert.alert('File upload:', 'succeed', [
         {
           text: 'OK',
           onPress: () => {
