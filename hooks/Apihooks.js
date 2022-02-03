@@ -29,8 +29,10 @@ const doFetch = async (url, options = {}) => {
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
+  const [loading, setLoading] = useState(false);
   const {update} = useContext(MainContext);
   const loadMedia = async (start = 0, limit = 10) => {
+    setLoading(true);
     try {
       const response = await fetch(
         `${baseUrl}media?start=${start}&limit=${limit}`
@@ -49,8 +51,13 @@ const useMedia = () => {
       );
       setMediaArray(media);
       // console.log(mediaArray);
+      // when media is ready do setLoading(false)
+      // media && setLoading(false);
     } catch (error) {
       console.error(error);
+      // setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
   // call loadMedia() only once when the com component is loaded
@@ -60,6 +67,7 @@ const useMedia = () => {
   }, [update]);
 
   const postMedia = async (formData, token) => {
+    setLoading(true);
     const options = {
       method: 'POST',
       headers: {
@@ -68,10 +76,17 @@ const useMedia = () => {
       },
       body: formData,
     };
-    return await doFetch(baseUrl + 'media', options);
+
+    const result = await doFetch(baseUrl + 'media', options);
+    // if (result) {
+    //   setLoading(false);
+    // }
+    // same as if statement
+    result && setLoading(false);
+    return result;
   };
   console.log(mediaArray, postMedia);
-  return {mediaArray, postMedia};
+  return {mediaArray, postMedia, loading};
 };
 
 const useLogin = () => {

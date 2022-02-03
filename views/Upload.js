@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
@@ -7,6 +7,7 @@ import {useMedia} from '../hooks/ApiHooks';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Upload = ({navigation}) => {
   const [image, setImage] = useState(
@@ -14,12 +15,14 @@ const Upload = ({navigation}) => {
   );
   const [type, setType] = useState('');
   const [imageSelected, setImageSelected] = useState(false);
-  const {postMedia} = useMedia();
+  const {postMedia, loading} = useMedia();
   const {update, setUpdate} = useContext(MainContext);
+
   const {
     control,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm({
     defaultValues: {
       title: '',
@@ -43,6 +46,20 @@ const Upload = ({navigation}) => {
       setType(result.type);
     }
   };
+
+  const reset = () => {
+    setImage('https://place-hold.it/300x200&text=Choose');
+    setImageSelected(false);
+    setValue('title', '');
+    setValue('description', '');
+  };
+  // To avoid the running the effect too often, it's important to wrap the callback in useCallback
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => reset();
+    }, [])
+  );
 
   const onSubmit = async (data) => {
     if (!imageSelected) {
@@ -70,7 +87,6 @@ const Upload = ({navigation}) => {
         {
           text: 'OK',
           onPress: () => {
-            // TODO: clear the form values here after submission
             setUpdate(update + 1);
             navigation.navigate('Home');
           },
@@ -81,6 +97,8 @@ const Upload = ({navigation}) => {
       console.log('onSubmit upload image problem');
     }
   };
+
+  console.log('loading status:', loading);
 
   return (
     <ScrollView>
@@ -102,11 +120,11 @@ const Upload = ({navigation}) => {
               value={value}
               autoCapitalize="none"
               placeholder="Title"
+              errorMessage={errors.description && 'This is required.'}
             />
           )}
           name="title"
         />
-        {errors.title && <Text>This is required.</Text>}
 
         <Controller
           control={control}
@@ -120,14 +138,20 @@ const Upload = ({navigation}) => {
               value={value}
               autoCapitalize="none"
               placeholder="Description"
+              errorMessage={errors.description && 'This is required.'}
             />
           )}
           name="description"
         />
-        {errors.description && <Text>This is required.</Text>}
 
         <Button title="Choose image" onPress={pickImage} />
-        <Button title="Upload" onPress={handleSubmit(onSubmit)} />
+        <Button
+          // disabled={!imageSelected}
+          loading={loading}
+          title="Upload"
+          onPress={handleSubmit(onSubmit)}
+        />
+        {/* <Button title="reset form" onPress={reset} /> */}
       </Card>
     </ScrollView>
   );
