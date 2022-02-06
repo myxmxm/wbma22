@@ -3,19 +3,22 @@ import PropTypes from 'prop-types';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input, Text} from 'react-native-elements';
-import {useMedia} from '../hooks/ApiHooks';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
 import {useFocusEffect} from '@react-navigation/native';
+import {appId} from '../utils/variables';
+import {Video} from 'expo-av';
 
 const Upload = ({navigation}) => {
   const [image, setImage] = useState(
     'https://place-hold.it/300x200&text=Choose'
   );
-  const [type, setType] = useState('');
+  const [type, setType] = useState('image');
   const [imageSelected, setImageSelected] = useState(false);
   const {postMedia, loading} = useMedia();
+  const {postTag} = useTag();
   const {update, setUpdate} = useContext(MainContext);
 
   const {
@@ -52,9 +55,10 @@ const Upload = ({navigation}) => {
     setImageSelected(false);
     setValue('title', '');
     setValue('description', '');
+    setType('image');
   };
   // To avoid the running the effect too often, it's important to wrap the callback in useCallback
-
+  // add [] useCallback will only be executed only navigate away from this view
   useFocusEffect(
     useCallback(() => {
       return () => reset();
@@ -83,15 +87,25 @@ const Upload = ({navigation}) => {
       const token = await AsyncStorageLib.getItem('userToken');
       const response = await postMedia(formData, token);
       console.log('upload response', response);
-      Alert.alert('File upload:', 'succeed', [
+      // && means if response exist do ......(in this case if statement is not necessary, because file_id use response, it will wait until postMedia is done)
+      const tagResponse = await postTag(
         {
-          text: 'OK',
-          onPress: () => {
-            setUpdate(update + 1);
-            navigation.navigate('Home');
-          },
+          file_id: response.file_id,
+          tag: appId,
         },
-      ]);
+        token
+      );
+      console.log('tag response:', tagResponse);
+      tagResponse &&
+        Alert.alert('File upload:', 'succeed', [
+          {
+            text: 'OK',
+            onPress: () => {
+              setUpdate(update + 1);
+              navigation.navigate('Home');
+            },
+          },
+        ]);
     } catch (error) {
       // You should be notify the user about problems
       console.log('onSubmit upload image problem');
@@ -99,15 +113,28 @@ const Upload = ({navigation}) => {
   };
 
   console.log('loading status:', loading);
+  console.log('type is:', type);
 
   return (
     <ScrollView>
       <Card>
-        <Card.Image
-          source={{uri: image}}
-          style={styles.image}
-          onPress={pickImage}
-        ></Card.Image>
+        {type === 'image' ? (
+          <Card.Image
+            source={{uri: image}}
+            style={styles.image}
+            onPress={pickImage}
+          ></Card.Image>
+        ) : (
+          <Video
+            source={{uri: image}}
+            style={styles.image}
+            useNativeControls={true}
+            resizeMode="cover"
+            onError={(err) => {
+              console.error('video error', err);
+            }}
+          />
+        )}
         <Controller
           control={control}
           rules={{

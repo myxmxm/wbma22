@@ -7,7 +7,7 @@ import {useMedia} from '../hooks/ApiHooks';
 
 const List = ({navigation}) => {
   const {mediaArray, loading} = useMedia();
-  console.log('List load', loading);
+  console.log('List load status:', loading);
 
   return (
     <FlatList
