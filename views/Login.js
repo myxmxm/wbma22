@@ -5,7 +5,7 @@ import {
   Platform,
   TouchableOpacity,
   Keyboard,
-  View,
+  ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
@@ -13,10 +13,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../hooks/ApiHooks';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import {ButtonGroup, Card, Text} from 'react-native-elements';
-import Logo from '../assets/logo.svg';
+import {ButtonGroup, Card} from 'react-native-elements';
+// import Logo from '../assets/logo.svg';
+import LottieView from 'lottie-react-native';
 
 const Login = ({navigation}) => {
+  const animation = React.createRef();
   const [formToggle, setFormToggle] = useState(true);
   const {setIsLoggedIn, setUser} = useContext(MainContext);
   const {getUserByToken} = useUser();
@@ -40,6 +42,7 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     checkToken();
+    animation.current?.play();
   }, []);
 
   return (
@@ -50,14 +53,19 @@ const Login = ({navigation}) => {
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
-        style={styles.container}
+        style={styles.FlexGrowOne}
       >
-        <View style={styles.appTitle}>
-          <Text>MyApp</Text>
-          <Logo style={styles.logo} />
-        </View>
-        <View style={styles.form}>
+        <ScrollView contentContainerStyle={styles.container}>
           <Card>
+            <Card.Image style={styles.fakeImage}>
+              {/* <Logo /> */}
+              <LottieView
+                ref={animation}
+                source={require('../assets/lottie-animation.json')}
+                style={styles.animation}
+                loop={false}
+              />
+            </Card.Image>
             <ButtonGroup
               onPress={() => setFormToggle(!formToggle)}
               selectedIndex={formToggle ? 0 : 1}
@@ -77,27 +85,25 @@ const Login = ({navigation}) => {
               <RegisterForm setFormToggle={setFormToggle} />
             </Card>
           )}
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  FlexGrowOne: {
+    flexGrow: 1,
+  },
   container: {
-    flex: 1,
     padding: 16,
   },
-  appTitle: {
-    flex: 1,
+  animation: {
     justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
   },
-  form: {
-    flex: 8,
-  },
-  logo: {
-    marginTop: 5,
+  fakeImage: {
+    backgroundColor: '#fff',
   },
 });
 
