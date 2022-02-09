@@ -84,7 +84,7 @@ const Single = ({route}) => {
     fetchOwner();
     fetchAvatar();
     fetchLikes();
-  }, []);
+  }, [userLike]);
 
   return (
     <Card>
