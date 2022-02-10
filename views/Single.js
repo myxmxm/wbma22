@@ -19,6 +19,7 @@ const Single = ({route}) => {
   const [likes, setLikes] = useState([]);
   const {postFavourite, getFavouritesByFileId, deleteFavourite} = useFavorite();
   const [userLike, setUserLike] = useState(false);
+  console.log('user like:', userLike);
 
   const fetchOwner = async () => {
     try {
