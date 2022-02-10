@@ -1,9 +1,37 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {Avatar, ListItem as RNEListItem} from 'react-native-elements';
+import {
+  Avatar,
+  ButtonGroup,
+  ListItem as RNEListItem,
+} from 'react-native-elements';
+import {Alert} from 'react-native';
+import {useMedia} from '../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
 
-const ListItem = ({navigation, singleMedia}) => {
+const ListItem = ({navigation, singleMedia, myFilesOnly}) => {
+  const {deleteMedia} = useMedia();
+  const {update, setUpdate} = useContext(MainContext);
+  const doDelete = () => {
+    Alert.alert('Delete', 'This file will be deleted!', [
+      {text: 'Cancel'},
+      {
+        text: 'OK',
+        onPress: async () => {
+          try {
+            const token = await AsyncStorage.getItem('userToken');
+            const response = await deleteMedia(singleMedia.file_id, token);
+            console.log('delete', response);
+            response && setUpdate(update + 1);
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+    ]);
+  };
   return (
     <RNEListItem
       bottomDivider
@@ -22,6 +50,21 @@ const ListItem = ({navigation, singleMedia}) => {
         <RNEListItem.Subtitle numberOfLines={1}>
           {singleMedia.description}
         </RNEListItem.Subtitle>
+        {myFilesOnly && (
+          <ButtonGroup
+            onPress={(index) => {
+              if (index === 0) {
+                Alert.alert('Modify');
+                navigation.navigate('Modify', {file: singleMedia});
+              } else {
+                // Alert.alert('Delete');
+                doDelete();
+              }
+            }}
+            buttons={['Modify', 'Delete']}
+            rounded
+          />
+        )}
       </RNEListItem.Content>
       <RNEListItem.Chevron />
     </RNEListItem>
@@ -31,6 +74,7 @@ const ListItem = ({navigation, singleMedia}) => {
 ListItem.propTypes = {
   singleMedia: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
+  myFilesOnly: PropTypes.bool,
 };
 
 export default ListItem;

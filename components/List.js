@@ -5,8 +5,8 @@ import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import {useMedia} from '../hooks/ApiHooks';
 
-const List = ({navigation}) => {
-  const {mediaArray, loading} = useMedia();
+const List = ({navigation, myFilesOnly = false}) => {
+  const {mediaArray, loading} = useMedia(myFilesOnly);
   console.log('List load status:', loading);
 
   return (
@@ -14,7 +14,11 @@ const List = ({navigation}) => {
       data={mediaArray}
       keyExtractor={(item) => item.file_id.toString()}
       renderItem={({item}) => (
-        <ListItem navigation={navigation} singleMedia={item} />
+        <ListItem
+          navigation={navigation}
+          singleMedia={item}
+          myFilesOnly={myFilesOnly}
+        />
       )}
     ></FlatList>
   );
@@ -22,6 +26,7 @@ const List = ({navigation}) => {
 
 List.propTypes = {
   navigation: PropTypes.object,
+  myFilesOnly: PropTypes.bool,
 };
 
 export default List;
