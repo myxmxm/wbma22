@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useContext} from 'react';
 import {ActivityIndicator, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
@@ -6,6 +6,8 @@ import {Avatar, Button, Card, ListItem, Text} from 'react-native-elements';
 import {Video, AVPlaybackStatus} from 'expo-av';
 import {useUser, useTag, useFavorite} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {User} from 'react-native-feather';
+import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   console.log('route:', route);
@@ -20,6 +22,7 @@ const Single = ({route}) => {
   const {postFavourite, getFavouritesByFileId, deleteFavourite} = useFavorite();
   const [userLike, setUserLike] = useState(false);
   console.log('user like:', userLike);
+  const {user} = useContext(MainContext);
 
   const fetchOwner = async () => {
     try {
@@ -52,6 +55,11 @@ const Single = ({route}) => {
       const likesData = await getFavouritesByFileId(file.file_id);
       console.log('like data:', likesData);
       setLikes(likesData);
+      likesData.forEach((like) => {
+        if (like.user_id === user.user_id) {
+          setUserLike(true);
+        }
+      });
     } catch (error) {
       // TODO: how should user be notified?
       console.error('fetchLikes', error);
@@ -61,8 +69,9 @@ const Single = ({route}) => {
   const createFavourite = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      await postFavourite(file.file_id, token);
-      setUserLike(true);
+      const response = await postFavourite(file.file_id, token);
+      // console.log('createFavourite()', response);
+      response && setUserLike(true);
     } catch (error) {
       // TODO: how should user be notified?
       // console.error('createFavourite', error);
@@ -73,8 +82,8 @@ const Single = ({route}) => {
   const removeFavourite = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      await deleteFavourite(file.file_id, token);
-      setUserLike(false);
+      const response = await deleteFavourite(file.file_id, token);
+      response && setUserLike(false);
     } catch (error) {
       // TODO: how should user be notified?
       console.error('removeFavourite', error);
@@ -82,10 +91,13 @@ const Single = ({route}) => {
   };
 
   useEffect(() => {
-    fetchOwner();
-    fetchAvatar();
     fetchLikes();
   }, [userLike]);
+
+  useEffect(() => {
+    fetchOwner();
+    fetchAvatar();
+  }, []);
 
   return (
     <Card>
